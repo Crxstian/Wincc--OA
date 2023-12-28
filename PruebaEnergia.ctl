@@ -20,27 +20,20 @@ main(){
     file archivo;
     string pruebatxt = "archivo_resultados.txt";
     string timeToTxt;
-      
-    
-    
-    
-    
+
     Debug(horaActual);
     Debug("Hello world"); 
     //Debug(horaEstampa);
 while (1){
-    time horaActual = getCurrentTime();
-     
+    horaActual = getCurrentTime();
     //if (minute(horaActual) % (temporizacion/60) == 0) 
     if ((minute(horaActual) % (temporizacion/60) == 0) && (second(horaActual)<=1)) {
         archivo = fopen(pruebatxt, "a");  
         // Obtener el Valor Inicial
         dpGet(dpEnergia, valorInicial);
-
         Debug("----------Esperando Delay 15 Minutos----------");
         // Esperar 15 minutos para tomar el nuevo valor 
         delay(temporizacion);
-        
 
         // Obtener el nuevo Valor después de 15 minutos 
         dpGet(dpEnergia, valorActual);
@@ -50,20 +43,17 @@ while (1){
         Debug("-----Variable ESTAMPA:  ----->");
         Debug(horaEstampa);
         
-                       
         // Realizar la Resta
         resultado = valorActual - valorInicial;
 
         // Establecer el resultado en otro datapoint
         dpSet(dpResultante, resultado);
         
-        
         if (archivo != -1) {
           //2023.12.27 10:05:49.549;0.013312
-             timeToTxt = year(horaActual)+"."+month(horaActual)+"."+day(horaActual)+" "+hour(horaActual)+":"+minute(horaActual)+":"+0+";"+0;
+            timeToTxt = year(horaActual)+"."+month(horaActual)+"."+day(horaActual)+" "+hour(horaActual)+":"+minute(horaActual)+":"+0+";"+0;
             // Escribir el resultado en una nueva línea del archivo
             fprintf(archivo, "%s;%f\n",timeToTxt, resultado);
-            
             // Cerrar el archivo después de escribir
             fclose(archivo);
             Debug("Escribio correctamente en archivo");
@@ -71,7 +61,5 @@ while (1){
             // Manejo de error si no se puede abrir el archivo
             Debug("Error al abrir el archivo para escribir.");
         }
-
-      }}
-
+    }}
 }
