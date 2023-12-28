@@ -18,8 +18,10 @@ main(){
     time horaEstampa;
     
     file archivo;
-    string pruebatxt = "archivo_resultados.txt";
-    string timeToTxt;
+    string path = "ruta/del/archivo/";  
+    string extension = ".txt";
+    string archivoActual = "archivo_resultados.txt";
+    string timeToTxt, nuevoArchivo;
 
     Debug(horaActual);
     Debug("Hello world"); 
@@ -28,7 +30,7 @@ while (1){
     horaActual = getCurrentTime();
     //if (minute(horaActual) % (temporizacion/60) == 0) 
     if ((minute(horaActual) % (temporizacion/60) == 0) && (second(horaActual)<=1)) {
-        archivo = fopen(pruebatxt, "a");  
+        archivo = fopen(archivoActual, "a");  
         // Obtener el Valor Inicial
         dpGet(dpEnergia, valorInicial);
         Debug("----------Esperando Delay 15 Minutos----------");
@@ -48,6 +50,32 @@ while (1){
 
         // Establecer el resultado en otro datapoint
         dpSet(dpResultante, resultado);
+
+        // Determinar el nombre del archivo según la fecha actual
+        nuevoArchivo = path + year(horaEstampa) + "_" + month(horaEstampa) + extension;
+
+        if (nuevoArchivo != archivoActual) {
+            // Cambió el mes, cerrar el archivo actual y abrir uno nuevo
+            if (archivo != -1) {
+                fclose(archivo);
+                Debug("Cerró el archivo actual");
+            }
+
+            archivoActual = nuevoArchivo;
+            archivo = fopen(archivoActual, "a");
+
+            if (archivo != -1) {
+                Debug("Abrió el archivo nuevo: " + archivoActual);
+                timeToTxt = year(horaActual)+"."+month(horaActual)+"."+day(horaActual)+" "+hour(horaActual)+":"+minute(horaActual)+":"+0+";"+0;
+                // Escribir el resultado en una nueva línea del archivo
+                fprintf(archivo, "%s;%f\n",timeToTxt, resultado);
+                // Cerrar el archivo después de escribir
+                fclose(archivo);
+                Debug("Escribio correctamente en archivo");
+            } else {
+                Debug("Error al abrir el archivo nuevo: " + archivoActual);
+            }
+        }
         
         if (archivo != -1) {
           //2023.12.27 10:05:49.549;0.013312
